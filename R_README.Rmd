@@ -1,3 +1,36 @@
 # R_Assignment
 title: "R_Assignment"
 output: html_document
+author: Ceci :)
+
+# Part I: Data Inspection
+
+### Looking at the files:
+
+> file.size("fang_et_al_genotypes.txt")
+[1] 11051939
+> file.size("snp_position.txt")
+[1] 82763
+
+### Creating data frames for .txt files:
+
+fang_genotypes <- read.delim("fang_et_al_genotypes.txt")
+snp_positions <- read.delim("snp_position.txt")
+
+### Looking at the dataframes:
+
+> nrow(fang_genotypes)
+[1] 2782
+> ncol(fang_genotypes)
+[1] 986
+> dim(fang_genotypes)
+[1] 2782  986
+
+> nrow(snp_positions)
+[1] 983
+> ncol(snp_positions)
+[1] 15
+> dim(snp_positions)
+[1] 983  15
+
+
