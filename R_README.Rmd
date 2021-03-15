@@ -1,36 +1,108 @@
-# R_Assignment
+
+---
 title: "R_Assignment"
 output: html_document
-author: Ceci :)
+date: 2021-03-14
+author: Cecilia Hodson
+---
 
 # Part I: Data Inspection
 
 ### Looking at the files:
-
-> file.size("fang_et_al_genotypes.txt")
-[1] 11051939
-> file.size("snp_position.txt")
-[1] 82763
-
+```{r}
+file.size("fang_et_al_genotypes.txt")
+file.size("snp_position.txt")
+```
 ### Creating data frames for .txt files:
-
+```{r}
 fang_genotypes <- read.delim("fang_et_al_genotypes.txt")
 snp_positions <- read.delim("snp_position.txt")
-
+```
 ### Looking at the dataframes:
+```{r}
+nrow(fang_genotypes)
+ncol(fang_genotypes)
 
-> nrow(fang_genotypes)
-[1] 2782
-> ncol(fang_genotypes)
-[1] 986
-> dim(fang_genotypes)
-[1] 2782  986
+nrow(snp_positions)
+ncol(snp_positions)
 
-> nrow(snp_positions)
-[1] 983
-> ncol(snp_positions)
-[1] 15
-> dim(snp_positions)
-[1] 983  15
+```
+### Data Processing
 
+Pulling genotype groups:
+```{r}
+maize <- fang_genotypes[fang_genotypes$Group =="ZMMIL" | fang_genotypes$Group == "ZMMMR" | fang_genotypes$Group == "ZMMLR",]
+teosinte <- fang_genotypes[fang_genotypes$Group == "ZMPIL" | fang_genotypes$Group == "ZMPJA" | fang_genotypes$Group =="ZMPBA",]
+```
+Transposing genotypes:
+```{r}
+transposed_maize <- as.data.frame(t(maize[,-1]))
+colnames(transposed_maize) <- maize$Sample_ID
+transposed_teosinte <- as.data.frame(t(teosinte[,-1]))
+colnames(transposed_teosinte) <- teosinte$Sample_ID
+```
+Pulling SNP Colums:
+```{r}
+snp_cols <- snp_positions[, c(1, 3, 4)]
+```
+Merging Files:
+```{r}
+#initial merging
+merged_maize <- merge(x = snp_cols, y = transposed_maize, by.x = "SNP_ID", by.y = "row.names", all.y = TRUE)
+merged_teosinte <-  merge(x = snp_cols, y= transposed_teosinte, by.x = "SNP_ID", by.y = "row.names", all.y = TRUE)
+
+#remove certain rows that are not data (i.e. "Group" and whatever "JG-OTU" is...)
+merged_maize <- merged_maize[-c(14, 16), ]
+merged_teosinte <- merged_teosinte[-c(14, 16), ]
+
+#removing undesirable values(i.e., "multiple" & "unknown")
+merged_maize <- merged_maize[!(merged_maize$Chromosome == "multiple"), ]
+merged_maize <- merged_maize[!(merged_maize$Chromosome == "unknown"), ]
+merged_maize <- merged_maize[!(merged_maize$Position == "unknown"), ]
+
+merged_teosinte <- merged_teosinte[!(merged_teosinte$Chromosome == "multiple"), ]
+merged_teosinte <- merged_teosinte[!(merged_teosinte$Chromosome == "unknown"), ]
+merged_teosinte <- merged_teosinte[!(merged_teosinte$Position == "unknown"), ]
+
+#sorting position column
+merged_maize$Position <- as.numeric(merged_maize$Position)
+merged_teosinte$Position <- as.numeric(merged_teosinte$Position)
+
+merged_maize <- merged_maize[order(merged_maize$Position), ]
+merged_teosinte <- merged_teosinte[order(merged_teosinte$Position), ]
+
+```
+Sorting by Chromosome Number:
+```{r}
+#for maize
+maize_split_list <- split(merged_maize, merged_maize$Chromosome, drop = FALSE)
+
+maize_chr_1 <- maize_split_list$'1'
+maize_chr_2 <- maize_split_list$'2'
+maize_chr_3 <- maize_split_list$'3'
+maize_chr_4 <- maize_split_list$'4'
+maize_chr_5 <- maize_split_list$'5'
+maize_chr_6 <- maize_split_list$'6'
+maize_chr_7 <- maize_split_list$'7'
+maize_chr_8 <- maize_split_list$'8'
+maize_chr_9 <- maize_split_list$'9'
+maize_chr_10 <- maize_split_list$'10'
+
+
+#for teosinte
+teo_split_list <- split(merged_teosinte, merged_teosinte$Chromosome, drop = FALSE)
+
+teo_chr_1 <- teo_split_list$'1'
+teo_chr_2 <- teo_split_list$'2'
+teo_chr_3 <- teo_split_list$'3'
+teo_chr_4 <- teo_split_list$'4'
+teo_chr_5 <- teo_split_list$'5'
+teo_chr_6 <- teo_split_list$'6'
+teo_chr_7 <- teo_split_list$'7'
+teo_chr_8 <- teo_split_list$'8'
+teo_chr_9 <- teo_split_list$'9'
+teo_chr_10 <- teo_split_list$'10'
+
+
+```
 
