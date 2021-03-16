@@ -130,6 +130,7 @@ SNPs Per Chromosome:
 genotypes <- as.data.frame(t(fang_genotypes[, -1]))
 merged_genotypes <- merge(x = snp_cols, y = genotypes, by.x = "SNP_ID", by.y = "row.names", all.y = TRUE)
 merged_genotypes <- merged_genotypes[-c(14, 16), ]
+<<<<<<< HEAD
 merged_genotypes$Chromosome <- factor(merged_genotypes$Chromosome, levels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "multiple", "unknown", "NA"))
 
 #Making the plot, adding a little pink in the plot, cause I like pink, and rainbow, cause its fun :)
@@ -139,6 +140,16 @@ ggplot(merged_genotypes, aes(x = Chromosome, fill = Chromosome)) + geom_bar(stat
   axis.title.y = element_text(colour = "black", angle=90, size=rel(2)),
   panel.background = element_rect(fill="white"),
   plot.background = element_rect(fill="pink"))  
+=======
+
+#Making the plot, adding a little pink, cause I like pink :)
+ggplot(merged_genotypes, aes(x = Chromosome)) + geom_bar(stat=) + ggtitle("Number of SNP on each chromosome") + theme(
+axis.text = element_text(colour = "black"),
+axis.title.x = element_text(colour = "black", size=rel(1)),
+axis.title.y = element_text(colour = "black", angle=90, size=rel(1)),
+panel.background = element_rect(fill="white"),
+plot.background = element_rect(fill="pink"))  
+>>>>>>> 2242ff8f261a4ef8c179a01656c547d4a5745bae
 ```
 
 
