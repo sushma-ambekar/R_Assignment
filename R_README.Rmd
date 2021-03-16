@@ -1,9 +1,11 @@
 
 ---
 title: "R_Assignment"
-output: html_document
-date: 2021-03-14
-author: Cecilia Hodson
+author: "Cecilia Hodson"
+date: '2021-03-14'
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 # Part I: Data Inspection
@@ -105,4 +107,49 @@ teo_chr_10 <- teo_split_list$'10'
 
 
 ```
+
+
+
+
+
+# Part II: Visualizing Data
+
+Install required packages:
+```{r}
+library(tidyverse)
+library(tidyr)
+library(ggplot2)
+library(reshape2)
+```
+SNPs Per Chromosome:
+```{r}
+#First, create a merged genotypes file:
+genotypes <- as.data.frame(t(fang_genotypes[, -1]))
+merged_genotypes <- merge(x = snp_cols, y = genotypes, by.x = "SNP_ID", by.y = "row.names", all.y = TRUE)
+merged_genotypes <- merged_genotypes[-c(14, 16), ]
+
+#Making the plot
+ggplot(merged_genotypes, aes((Chromosome))) + geom_bar(stat=) + ggtitle("Number of SNP on each chromosome") +
++     theme(
++         axis.text = element_text(colour = "black"),
++         axis.title.x = element_text(colour = "black", size=rel(1)),
++         axis.title.y = element_text(colour = "black", angle=90, size=rel(1)),
++         panel.background = element_rect(fill="white"),
++         panel.grid.minor.y = element_line(size=3),
++         panel.grid.major = element_line(colour = "black"),
++         plot.background = element_rect(fill="gray"))  
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
