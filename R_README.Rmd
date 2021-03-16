@@ -128,7 +128,7 @@ genotypes <- as.data.frame(t(fang_genotypes[, -1]))
 merged_genotypes <- merge(x = snp_cols, y = genotypes, by.x = "SNP_ID", by.y = "row.names", all.y = TRUE)
 merged_genotypes <- merged_genotypes[-c(14, 16), ]
 
-#Making the plot
+#Making the plot, adding a little pink, cause I like pink :)
 ggplot(merged_genotypes, aes(x = Chromosome)) + geom_bar(stat=) + ggtitle("Number of SNP on each chromosome") + theme(
 axis.text = element_text(colour = "black"),
 axis.title.x = element_text(colour = "black", size=rel(1)),
