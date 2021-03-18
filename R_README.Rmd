@@ -28,6 +28,13 @@ library(httr)
 file.size("fang_et_al_genotypes.txt")
 file.size("snp_position.txt")
 ```
+### Creating directories for future files:
+```{r}
+dir.create("maize_files")
+dir.create("teosinte_files")
+dir.create("graphs")
+```
+
 ### Creating data frames for .txt files:
 ```{r}
 # I guess you need to import the data? I had a buddy run this for me and it wouldn't work for him until he imported these two .txt files. 
@@ -94,32 +101,69 @@ merged_teosinte <- merged_teosinte[order(merged_teosinte$Position), ]
 maize_split_list <- split(merged_maize, merged_maize$Chromosome, drop = FALSE)
 
 maize_chr_1 <- maize_split_list$"1" 
-maize_chr_2 <- maize_split_list$'2'
-maize_chr_3 <- maize_split_list$'3'
-maize_chr_4 <- maize_split_list$'4'
-maize_chr_5 <- maize_split_list$'5'
-maize_chr_6 <- maize_split_list$'6'
-maize_chr_7 <- maize_split_list$'7'
-maize_chr_8 <- maize_split_list$'8'
-maize_chr_9 <- maize_split_list$'9'
-maize_chr_10 <- maize_split_list$'10'
+maize_chr_2 <- maize_split_list$"2"
+maize_chr_3 <- maize_split_list$"3"
+maize_chr_4 <- maize_split_list$"4"
+maize_chr_5 <- maize_split_list$"5"
+maize_chr_6 <- maize_split_list$"6"
+maize_chr_7 <- maize_split_list$"7"
+maize_chr_8 <- maize_split_list$"8"
+maize_chr_9 <- maize_split_list$"9"
+maize_chr_10 <- maize_split_list$"10"
 
 
 # for teosinte
 teo_split_list <- split(merged_teosinte, merged_teosinte$Chromosome, drop = FALSE)
 
-teo_chr_1 <- teo_split_list$'1'
-teo_chr_2 <- teo_split_list$'2'
-teo_chr_3 <- teo_split_list$'3'
-teo_chr_4 <- teo_split_list$'4'
-teo_chr_5 <- teo_split_list$'5'
-teo_chr_6 <- teo_split_list$'6'
-teo_chr_7 <- teo_split_list$'7'
-teo_chr_8 <- teo_split_list$'8'
-teo_chr_9 <- teo_split_list$'9'
-teo_chr_10 <- teo_split_list$'10'
+teo_chr_1 <- teo_split_list$"1"
+teo_chr_2 <- teo_split_list$"2"
+teo_chr_3 <- teo_split_list$"3"
+teo_chr_4 <- teo_split_list$"4"
+teo_chr_5 <- teo_split_list$"5"
+teo_chr_6 <- teo_split_list$"6"
+teo_chr_7 <- teo_split_list$"7"
+teo_chr_8 <- teo_split_list$"8"
+teo_chr_9 <- teo_split_list$"9"
+teo_chr_10 <- teo_split_list$"10"
+
+# Sorting by decreasing position (reversed):
+
+maize_reverse <- merged_maize[order(merged_maize$Position, decreasing=T),]
+teosinte_reverse <- merged_teosinte[order(merged_teosinte$Position, decreasing=T),]
 
 
+maize_reverse[] <- lapply(maize_reverse, as.character)
+maize_reverse[maize_reverse == "?/?"] <- "-/-"
+teosinte_reverse[] <- lapply(teosinte_reverse, as.character)
+teosinte_reverse[teosinte_reverse == "?/?"] <- "-/-"
+
+
+maize_split_reverse <- split(maize_reverse, maize_reverse$Chromosome)
+
+maize_reverse_chr1 <- maize_split_reverse$"1"
+maize_reverse_chr2 <- maize_split_reverse$"2"
+maize_reverse_chr3 <- maize_split_reverse$"3"
+maize_reverse_chr4 <- maize_split_reverse$"4"
+maize_reverse_chr5 <- maize_split_reverse$"5"
+maize_reverse_chr6 <- maize_split_reverse$"6"
+maize_reverse_chr7 <- maize_split_reverse$"7"
+maize_reverse_chr8 <- maize_split_reverse$"8"
+maize_reverse_chr9 <- maize_split_reverse$"9"
+maize_reverse_chr10 <- maize_split_reverse$"10"
+
+
+teosinte_split_rev <- split(teosinte_reverse, teosinte_reverse$Chromosome)
+
+teo_reverse_chr1 <- teosinte_split_rev$"1"
+teo_reverse_chr2 <- teosinte_split_rev$"2"
+teo_reverse_chr3 <- teosinte_split_rev$"3"
+teo_reverse_chr4 <- teosinte_split_rev$"4"
+teo_reverse_chr5 <- teosinte_split_rev$"5"
+teo_reverse_chr6 <- teosinte_split_rev$"6"
+teo_reverse_chr7 <- teosinte_split_rev$"7"
+teo_reverse_chr8 <- teosinte_split_rev$"8"
+teo_reverse_chr9 <- teosinte_split_rev$"9"
+teo_reverse_chr10 <- teosinte_split_rev$"10"
 ```
 
 
@@ -146,6 +190,7 @@ merged_genotypes <- merge(x = snp_cols, y = genotypes, by.x = "SNP_ID", by.y = "
 merged_genotypes <- merged_genotypes[-c(14, 16), ]
 merged_genotypes$Chromosome <- factor(merged_genotypes$Chromosome, levels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "multiple", "unknown", "NA"))
 
+
 # Making the plot and adding a little pink in the plot, cause I like pink :)
 ggplot(merged_genotypes, aes(x = Chromosome, fill = Chromosome)) + geom_bar(stat=) + ggtitle("SNPs per Chromosome") + theme(
   axis.text.x = element_text(colour = "black", angle = 45),
@@ -153,6 +198,8 @@ ggplot(merged_genotypes, aes(x = Chromosome, fill = Chromosome)) + geom_bar(stat
   axis.title.y = element_text(colour = "black", angle=90, size=rel(2)),
   panel.background = element_rect(fill="white"),
   plot.background = element_rect(fill="pink"))  
+
+ggsave(filename = "graphs/SNPs per Chromosome.png", device = "png")
 ```
 
 ### Distibution of SNPs per Chromosome
@@ -169,6 +216,8 @@ ggplot(merged_genotypes) + geom_density(mapping = aes(x=Position, colour=Chromos
     axis.title.x = element_text(colour = "purple"),
     axis.title.y = element_text(colour = "purple", angle=90, size=rel(2))
     )
+
+ggsave(filename = "graphs/Density of Position by Chromosome.png", device = "png")
 ```
 
 
@@ -201,13 +250,14 @@ zygosity_genotypes <- arrange(zygosity_genotypes, Sample_ID, Group)
 # Time to plot!
 ggplot(data = zygosity_genotypes) +
     geom_bar(mapping = aes(x = Sample_ID, fill = Homozygous), stat = "count") +
-    ggtitle(label = "SNP Zygosity by Ordered Sample_ID") +
+    ggtitle(label = "SNP Zygosity") +
     ylab(label = "Number of SNPs") +
     theme(
-        plot.title = element_text(hjust = 0.5),
+        plot.title = element_text(size=rel(2)),
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank())
 
+ggsave(filename = "graphs/Heterozygosity and Missing Data.png", device = "png")
 ```
 
 ## Distribution of Groups
@@ -220,17 +270,21 @@ ggplot(fang_genotypes, aes(x = Group)) + geom_bar(stat=, fill = "pink", position
         panel.background = element_rect(fill="white"),
         plot.background = element_rect(fill="white"))
 
+ggsave(filename = "graphs/Data Group Distribution.png", device = "png")
+
 # Removing large groups:
 fang_no_groups <- fang_genotypes[fang_genotypes$Group =="TRIPS" | fang_genotypes$Group == "ZDIPL" | fang_genotypes$Group == "ZLUXR" | fang_genotypes$Group =="ZMHUE" | fang_genotypes$Group =="ZMMMR" | fang_genotypes$Group =="ZMPIL" | fang_genotypes$Group =="ZMPJA" | fang_genotypes$Group =="ZMXCH" | fang_genotypes$Group =="ZMXIL" | fang_genotypes$Group =="ZMXNO" | fang_genotypes$Group =="ZMXNT" | fang_genotypes$Group =="ZPERR", ]
 
 
 # Plot without large groups
-ggplot(fang_no_groups, aes(x = Group)) + geom_bar(stat=, fill = "pink", position="dodge",) + ggtitle("Data Group Distribution") + theme(
+ggplot(fang_no_groups, aes(x = Group)) + geom_bar(stat=, fill = "pink", position="dodge",) + ggtitle("Data Group Distribution 2") + theme(
     axis.text.x = element_text(colour = "black", angle = 45),
     axis.title.x = element_text(colour = "black", size=rel(2)),
     axis.title.y = element_text(colour = "black", angle=90, size=rel(2)),
     panel.background = element_rect(fill="white"),
     plot.background = element_rect(fill="white"))
+
+ggsave(filename = "graphs/Data Group Distribution 2.png", device = "png")
 ```
 
 
