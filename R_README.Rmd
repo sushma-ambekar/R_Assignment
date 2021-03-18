@@ -112,6 +112,8 @@ maize_chr_9 <- maize_split_list$"9"
 maize_chr_10 <- maize_split_list$"10"
 
 
+write.csv(path = "maize_files/maize_chr_1.csv")
+
 # for teosinte
 teo_split_list <- split(merged_teosinte, merged_teosinte$Chromosome, drop = FALSE)
 
