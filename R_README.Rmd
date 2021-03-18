@@ -10,6 +10,19 @@ output:
 
 # Part I: Data Inspection
 
+### Install packages n' stuff
+```{r}
+if (!require("tidyverse")) install.packages("tidyverse")
+library(tidyverse)
+if (!require("ggplot2")) install.packages("ggplot2")
+library(ggplot2)
+if (!require("gtools")) install.packages("gtools")
+library(gtools)
+if (!require("reshape2")) install.packages("reshape2")
+library(reshape2)
+if (!require("httr")) install.packages("httr")
+library(httr)
+```
 ### Looking at the files:
 ```{r}
 file.size("fang_et_al_genotypes.txt")
@@ -17,6 +30,7 @@ file.size("snp_position.txt")
 ```
 ### Creating data frames for .txt files:
 ```{r}
+# I guess you need to import the data? I had a buddy run this for me and it wouldn't work for him until he imported these two .txt files. 
 fang_genotypes <- read.delim("fang_et_al_genotypes.txt")
 snp_positions <- read.delim("snp_position.txt")
 ```
@@ -79,7 +93,7 @@ merged_teosinte <- merged_teosinte[order(merged_teosinte$Position), ]
 # for maize
 maize_split_list <- split(merged_maize, merged_maize$Chromosome, drop = FALSE)
 
-maize_chr_1 <- maize_split_list$'1'
+maize_chr_1 <- maize_split_list$"1" 
 maize_chr_2 <- maize_split_list$'2'
 maize_chr_3 <- maize_split_list$'3'
 maize_chr_4 <- maize_split_list$'4'
@@ -116,9 +130,9 @@ teo_chr_10 <- teo_split_list$'10'
 
 ### Install required packages:
 ```{r}
-library(tidyverse)
-library(tidyr)
+if (!require("ggplot2")) install.packages("ggplot2")
 library(ggplot2)
+if (!require("reshape2")) install.packages("reshape2")
 library(reshape2)
 ```
 
@@ -160,10 +174,39 @@ ggplot(merged_genotypes) + geom_density(mapping = aes(x=Position, colour=Chromos
 
 ## Missing Data and Heterozygosity:
 ```{r}
+# Grabbing the SNPS
+zygosity_genotypes_extended <- fang_genotypes[fang_genotypes$Group == "ZMMIL" | fang_genotypes$Group == "ZMMLR" | fang_genotypes$Group == "ZMMMR" | fang_genotypes$Group == "ZMPBA" | fang_genotypes$Group == "ZMPIL" | fang_genotypes$Group == "ZMPJA",]
 
+zygosity_genotypes <- melt(zygosity_genotypes_extended, measure.vars = colnames(fang_genotypes)[4:986])
+colnames(zygosity_genotypes)[4:5] <- c("SNP_ID", "Homozygous")
 
+# Applying that "TRUE/FALSE" property to the newly created columns:
+zygosity_genotypes[zygosity_genotypes == "A/A"] <- TRUE
+zygosity_genotypes[zygosity_genotypes == "C/C"] <- TRUE
+zygosity_genotypes[zygosity_genotypes == "G/G"] <- TRUE
+zygosity_genotypes[zygosity_genotypes == "T/T"] <- TRUE
 
+zygosity_genotypes[zygosity_genotypes == "A/C"] <- FALSE
+zygosity_genotypes[zygosity_genotypes == "A/G"] <- FALSE
+zygosity_genotypes[zygosity_genotypes == "A/T"] <- FALSE
+zygosity_genotypes[zygosity_genotypes == "C/G"] <- FALSE
+zygosity_genotypes[zygosity_genotypes == "C/T"] <- FALSE
+zygosity_genotypes[zygosity_genotypes == "G/T"] <- FALSE
 
+zygosity_genotypes[zygosity_genotypes == "?/?"] <- NA
+
+# Time to sort!
+zygosity_genotypes <- arrange(zygosity_genotypes, Sample_ID, Group)
+
+# Time to plot!
+ggplot(data = zygosity_genotypes) +
+    geom_bar(mapping = aes(x = Sample_ID, fill = Homozygous), stat = "count") +
+    ggtitle(label = "SNP Zygosity by Ordered Sample_ID") +
+    ylab(label = "Number of SNPs") +
+    theme(
+        plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
 
 ```
 
@@ -176,6 +219,10 @@ ggplot(fang_genotypes, aes(x = Group)) + geom_bar(stat=, fill = "pink", position
         axis.title.y = element_text(colour = "black", angle=90, size=rel(2)),
         panel.background = element_rect(fill="white"),
         plot.background = element_rect(fill="white"))
+
+# Removing large groups:
+fang_no_groups <- fang_genotypes[fang_genotypes$Group =="TRIPS" | fang_genotypes$Group == "ZDIPL" | fang_genotypes$Group == "ZLUXR" | fang_genotypes$Group =="ZMHUE" | fang_genotypes$Group =="ZMMMR" | fang_genotypes$Group =="ZMPIL" | fang_genotypes$Group =="ZMPJA" | fang_genotypes$Group =="ZMXCH" | fang_genotypes$Group =="ZMXIL" | fang_genotypes$Group =="ZMXNO" | fang_genotypes$Group =="ZMXNT" | fang_genotypes$Group =="ZPERR", ]
+
 
 # Plot without large groups
 ggplot(fang_no_groups, aes(x = Group)) + geom_bar(stat=, fill = "pink", position="dodge",) + ggtitle("Data Group Distribution") + theme(
