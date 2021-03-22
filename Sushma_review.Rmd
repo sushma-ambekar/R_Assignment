@@ -1,0 +1,51 @@
+---
+title: "Sushma_review"
+author: "Sushma Ambekar"
+date: "3/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Cecilia Hodson's R assignment review
+
+#### Data inspection
+
+Everything runs smooth and looks good.
+
+Not sure if this is what you mean by importing the files, but you can use the following code to load them on R directly from github
+
+```{r}
+fang_et_al_genotypes <- read.table("https://raw.githubusercontent.com/EEOB-BioData/BCB546-Spring2021/master/assignments/UNIX_Assignment/fang_et_al_genotypes.txt", header = TRUE, sep = "\t")
+snp_position <- read.table("https://raw.githubusercontent.com/EEOB-BioData/BCB546-Spring2021/master/assignments/UNIX_Assignment/snp_position.txt", header = TRUE, sep = "\t")
+```
+
+An alternative way to get both number of columns and rows at the same time would be dim(). If you wanted to add more aspects to the data inspection you can use str(),colnames() or table(filename$columnname). 
+
+#### Data processing
+
+Steps were easy to follow and ran correctly.
+Making a directory early on for the files you generate later was a great idea!
+
+I have one suggestion, somehting that might make your work easier. You can use the following strategy to create files for different chromosomes without having to name them one by one:
+
+```{r}
+for (i in 1:10){
+  #creating an intermediate file called 'maize_chromosome_files' which will update with each for-loop cycle
+ maize_chromosome_files <- merge_split_list[merge_split_list$Chromosome == i,]
+ #this will create csv files with the names maize_chr_1-10 
+  write.csv(maize_chromosome_files, file=paste("maize_chr_",i,".csv",sep=""))
+```
+
+
+#### Data plotting 
+
+Your graphs look very colourful! 
+
+I found the SNPs distribution along chromosomes very interesting. I took a very different approach to this so I liked how it can be interpreted in different forms!
+
+In places where you need to specify chromsomes 1 to 10, you can put in c(1:10,"unknown","multiple") if you want to save time! Yours works perfectly but just an option.
+
+Overall, I also found it very helpful that you had comments within the code chunks. 
